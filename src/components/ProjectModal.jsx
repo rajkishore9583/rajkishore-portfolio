@@ -65,7 +65,7 @@ export default function ProjectModal({ project, onClose }) {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "/images/bg_1.jpg";
+                  e.target.src = "/images/bg_1.png";
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b1120] via-transparent to-transparent opacity-80" />

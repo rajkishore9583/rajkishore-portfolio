@@ -92,7 +92,7 @@ export default function Projects() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/images/bg_1.jpg";
+                        e.target.src = "/images/bg_1.png";
                       }}
                     />
                     
