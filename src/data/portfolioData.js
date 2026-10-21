@@ -8,7 +8,7 @@ export const portfolioData = {
     phone: "+91 8117959869",
     location: "Balasore, Odisha, India",
     linkedin: "https://www.linkedin.com/in/rajkishore-pradhan-ab74042b4/",
-    github: "https://github.com/rajkishorepradhan",
+    github: "https://github.com/rajkishore9583",
     resumeUrl: "https://drive.google.com/file/d/1Zoo5OQQ-zb73UIaeyjr5bvW9vIy0j0qE/view?usp=sharing",
     statusBadge: "Available for Industrial Automation & Core Electrical Roles",
     heroHeadline: "Engineering Intelligent Automation, Industrial Control Systems & Smart Enterprise Solutions.",
@@ -223,7 +223,7 @@ export const portfolioData = {
         "Manual override bypass switch for scheduled maintenance testing"
       ],
       impact: "Maintained power factor above 0.98 lagging, eliminating utility penalty surcharges and reducing overall distribution line current by ~18%.",
-      githubUrl: "https://github.com/rajkishorepradhan",
+      githubUrl: "https://github.com/rajkishore9583/rajkishore-portfolio",
       demoUrl: "#contact"
     },
     {
@@ -246,7 +246,7 @@ export const portfolioData = {
         "Audible and visual alarms for High-High (overflow risk) and Low-Low (starvation risk)"
       ],
       impact: "Achieved 100% prevention of tank overflow incidents, eliminated dry-run pump failures, and provided centralized visual control for plant operators.",
-      githubUrl: "https://github.com/rajkishorepradhan",
+      githubUrl: "https://github.com/rajkishore9583/rajkishore-portfolio",
       demoUrl: "#contact"
     },
     {
@@ -269,7 +269,7 @@ export const portfolioData = {
         "Integration roadmap between field automation telemetry and SAP enterprise inventory"
       ],
       impact: "Demonstrated a projected 35% reduction in sales order entry processing time and significantly minimized billing variance.",
-      githubUrl: "https://github.com/rajkishorepradhan",
+      githubUrl: "https://github.com/rajkishore9583/rajkishore-portfolio",
       demoUrl: "#contact"
     }
   ],
