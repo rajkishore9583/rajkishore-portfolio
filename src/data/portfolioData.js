@@ -268,9 +268,9 @@ export const portfolioData = {
         "Designed KPI dashboard metrics tracking Order Cycle Time, OTIF (On-Time In-Full), and Billing Accuracy",
         "Integration roadmap between field automation telemetry and SAP enterprise inventory"
       ],
-      impact: "Demonstrated a projected 35% reduction in sales order entry processing time and significantly minimized billing variance.",
-      githubUrl: "https://github.com/rajkishore9583/rajkishore-portfolio",
-      demoUrl: "#contact"
+      impact: "Demonstrated a projected 32% reduction in sales order cycle time, 91% fulfillment rate, and real-time process mining visibility across $14.2M+ pipeline volume.",
+      githubUrl: "https://github.com/rajkishore9583/sap-s4hana-o2c-optimization",
+      demoUrl: "#/projects/sap-o2c-dashboard"
     }
   ],
 

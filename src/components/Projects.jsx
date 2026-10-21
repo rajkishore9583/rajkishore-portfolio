@@ -149,14 +149,26 @@ export default function Projects() {
                 </div>
 
                 {/* Card Action Buttons */}
-                <div className="px-6 pb-6 pt-2 border-t border-white/5 flex items-center justify-between gap-3">
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors group/btn"
-                  >
-                    <span>Technical Deep Dive</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                  </button>
+                <div className="px-6 pb-6 pt-2 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors group/btn"
+                    >
+                      <span>Deep Dive</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                    </button>
+
+                    {project.demoUrl && project.demoUrl !== '#contact' && (
+                      <a
+                        href={project.demoUrl}
+                        className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2.5 py-1 rounded-md bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 transition-colors"
+                      >
+                        <Sparkles className="w-3 h-3 text-cyan-400" />
+                        <span>Live Simulator</span>
+                      </a>
+                    )}
+                  </div>
 
                   <a
                     href={project.githubUrl}

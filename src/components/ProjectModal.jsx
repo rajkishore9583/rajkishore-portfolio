@@ -145,12 +145,12 @@ export default function ProjectModal({ project, onClose }) {
           </div>
 
           {/* Modal Footer */}
-          <div className="px-6 py-4 border-t border-white/10 bg-slate-900/60 flex items-center justify-between">
+          <div className="px-6 py-4 border-t border-white/10 bg-slate-900/60 flex flex-wrap items-center justify-between gap-3">
             <span className="text-xs font-mono text-slate-400">
               Balasore, Odisha • Rajkishore Pradhan
             </span>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
               <a
                 href={project.githubUrl}
                 target="_blank"
@@ -161,14 +161,25 @@ export default function ProjectModal({ project, onClose }) {
                 <span>GitHub Repository</span>
               </a>
 
-              <a
-                href="#contact"
-                onClick={onClose}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 transition-colors shadow-md shadow-cyan-500/20"
-              >
-                <span>Discuss Project</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              {project.demoUrl && project.demoUrl !== '#contact' ? (
+                <a
+                  href={project.demoUrl}
+                  onClick={onClose}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 transition-colors shadow-md shadow-cyan-500/20"
+                >
+                  <span>Launch Live Simulator</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <a
+                  href="#contact"
+                  onClick={onClose}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 transition-colors shadow-md shadow-cyan-500/20"
+                >
+                  <span>Discuss Project</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
             </div>
           </div>
 
