@@ -1,239 +1,187 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, 
-  X, 
-  Download, 
-  Linkedin, 
-  Github, 
-  ExternalLink,
-  Cpu
-} from 'lucide-react';
-import { portfolioData } from '../data/portfolioData';
+import { Sun, Moon, Phone, Menu, X, Sparkles } from 'lucide-react';
+import { personalInfo } from '../data/portfolioData';
 
-const navLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Education', href: '#education' },
-  { name: 'Contact', href: '#contact' },
-];
-
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function Navbar({ darkMode, setDarkMode }) {
   const [activeSection, setActiveSection] = useState('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const navLinks = [
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Skills', href: '#skills' },
+    { name: 'Experience', href: '#experience' },
+    { name: 'Certificates', href: '#certificates' },
+    { name: 'Projects', href: '#projects' },
+    { name: 'Contact', href: '#contact' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
 
-      // Detect active section
-      const sections = ['about', 'experience', 'skills', 'projects', 'education', 'contact'];
+      const sections = navLinks.map(link => link.href.substring(1));
       const scrollPosition = window.scrollY + 200;
 
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
-            break;
-          }
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'glass-nav py-3 shadow-lg shadow-black/40' 
-          : 'bg-transparent py-5'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo / Monogram */}
-          <a 
-            href="#" 
-            className="flex items-center gap-3 group focus:outline-none"
-            aria-label="Rajkishore Pradhan Home"
-          >
-            <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 p-[1.5px] transition-transform duration-300 group-hover:scale-105 shadow-md shadow-cyan-500/20">
-                <div className="w-full h-full bg-[#080c14] rounded-[10px] flex items-center justify-center">
-                  <span className="font-extrabold text-sm tracking-wider bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                    {portfolioData.personal.monogram}
-                  </span>
-                </div>
-              </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#080c14] animate-pulse" />
-            </div>
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
 
-            <div className="flex flex-col">
-              <span className="font-bold text-base tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                {portfolioData.personal.name}
-              </span>
-              <span className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
-                <Cpu className="w-3 h-3 text-cyan-400" />
-                PLC • SCADA • Automation
-              </span>
-            </div>
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4 sm:pt-6 pointer-events-none">
+      <nav 
+        className={`pointer-events-auto transition-all duration-300 w-full max-w-6xl rounded-full px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between ${
+          darkMode 
+            ? 'glass-pill-dark bg-[#130924]/80 border-purple-500/25 shadow-glow-sm' 
+            : 'glass-pill-light bg-white/85 border-purple-300/40 shadow-md'
+        }`}
+      >
+        {/* Logo */}
+        <a 
+          href="#home" 
+          className="flex items-center gap-1.5 font-extrabold text-lg sm:text-xl tracking-tight group focus:outline-none"
+        >
+          <span className={darkMode ? 'text-white' : 'text-[#1e1b4b]'}>Portfolio</span>
+          <span className="text-purple-500 group-hover:scale-125 transition-transform duration-300">.</span>
+        </a>
+
+        {/* Desktop Navigation Links */}
+        <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.href.substring(1);
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${
+                  isActive
+                    ? darkMode
+                      ? 'text-white bg-purple-600/30 border border-purple-400/40 shadow-glow-sm'
+                      : 'text-purple-900 bg-purple-100 border border-purple-300'
+                    : darkMode
+                      ? 'text-purple-200/80 hover:text-white hover:bg-purple-900/30'
+                      : 'text-slate-600 hover:text-purple-700 hover:bg-purple-50'
+                }`}
+              >
+                {link.name}
+                {isActive && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full shadow-glow-sm" />
+                )}
+              </a>
+            );
+          })}
+        </div>
+
+        {/* Right Side Actions: Phone Call + Dark/Light Theme Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Phone Link */}
+          <a
+            href={personalInfo.socials.phone}
+            title={personalInfo.phoneFormatted}
+            className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 ${
+              darkMode
+                ? 'text-purple-300 hover:text-white bg-purple-900/30 hover:bg-purple-800/50 border border-purple-500/20'
+                : 'text-purple-700 hover:text-purple-900 bg-purple-100/70 hover:bg-purple-200/80 border border-purple-200'
+            }`}
+          >
+            <Phone className="w-4 h-4" />
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2 bg-slate-900/60 p-1.5 rounded-full border border-white/5 backdrop-blur-md">
+          {/* Theme Switcher Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className={`relative p-2 sm:p-2.5 rounded-full transition-all duration-300 group ${
+              darkMode
+                ? 'bg-purple-950/70 border border-purple-500/40 text-yellow-300 hover:shadow-glow-sm'
+                : 'bg-purple-100 border border-purple-300 text-purple-700 hover:bg-purple-200'
+            }`}
+          >
+            {darkMode ? (
+              <Sun className="w-4 h-4 transition-transform group-hover:rotate-45" />
+            ) : (
+              <Moon className="w-4 h-4 transition-transform group-hover:-rotate-12" />
+            )}
+          </button>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle Mobile Menu"
+            className={`lg:hidden p-2 rounded-full transition-colors ${
+              darkMode 
+                ? 'text-purple-200 hover:bg-purple-900/40' 
+                : 'text-slate-700 hover:bg-purple-100'
+            }`}
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div 
+          className={`lg:hidden fixed inset-x-4 top-20 rounded-2xl p-6 transition-all duration-300 shadow-2xl pointer-events-auto ${
+            darkMode 
+              ? 'bg-[#130924]/95 border border-purple-500/30 backdrop-blur-xl' 
+              : 'bg-white/95 border border-purple-200 backdrop-blur-xl'
+          }`}
+        >
+          <div className="flex flex-col gap-3">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.href.replace('#', '');
+              const isActive = activeSection === link.href.substring(1);
               return (
                 <a
                   key={link.name}
                   href={link.href}
-                  className={`relative px-3.5 py-1.5 text-xs lg:text-sm font-medium rounded-full transition-all duration-200 ${
-                    isActive 
-                      ? 'text-cyan-400 bg-cyan-500/10 shadow-inner' 
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? darkMode
+                        ? 'bg-purple-600/30 text-purple-200 border border-purple-500/40'
+                        : 'bg-purple-100 text-purple-900 border border-purple-300'
+                      : darkMode
+                        ? 'text-slate-300 hover:bg-purple-900/20 hover:text-white'
+                        : 'text-slate-700 hover:bg-purple-50 hover:text-purple-700'
                   }`}
                 >
                   {link.name}
-                  {isActive && (
-                    <motion.span 
-                      layoutId="activeTab"
-                      className="absolute inset-0 rounded-full border border-cyan-500/30"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
                 </a>
               );
             })}
-          </nav>
-
-          {/* Desktop Action Buttons & Socials */}
-          <div className="hidden lg:flex items-center gap-3">
-            <a
-              href={portfolioData.personal.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/80"
-              title="LinkedIn Profile"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4" />
-            </a>
-
-            <a
-              href={portfolioData.personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/80"
-              title="GitHub Profile"
-              aria-label="GitHub"
-            >
-              <Github className="w-4 h-4" />
-            </a>
-
-            <a
-              href={portfolioData.personal.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl text-slate-950 bg-gradient-to-r from-cyan-400 via-cyan-300 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 transition-all duration-300 shadow-md shadow-cyan-500/20 hover:shadow-cyan-500/35 hover:scale-[1.02]"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Resume</span>
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-2">
-            <a
-              href={portfolioData.personal.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400"
-            >
-              <Download className="w-3 h-3" />
-              <span>CV</span>
-            </a>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 focus:outline-none border border-slate-800"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="md:hidden glass-nav border-b border-white/10 px-4 pt-3 pb-6 mt-3 shadow-2xl"
-          >
-            <div className="flex flex-col space-y-2">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:text-cyan-400 hover:bg-slate-800/60 transition-colors"
-                >
-                  {link.name}
-                </a>
-              ))}
-
-              <div className="pt-3 border-t border-slate-800 flex items-center justify-between px-2">
-                <div className="flex items-center gap-3">
-                  <a
-                    href={portfolioData.personal.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                  <a
-                    href={portfolioData.personal.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800"
-                  >
-                    <Github className="w-5 h-5" />
-                  </a>
-                </div>
-
-                <a
-                  href={portfolioData.personal.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Resume</span>
-                </a>
-              </div>
+            <div className="pt-3 border-t border-purple-500/20 flex items-center justify-between">
+              <span className={`text-xs ${darkMode ? 'text-purple-300' : 'text-purple-800'}`}>
+                {personalInfo.phoneFormatted}
+              </span>
+              <a
+                href="#contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-btn"
+              >
+                Hire Me
+              </a>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }
