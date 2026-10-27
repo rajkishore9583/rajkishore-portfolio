@@ -5,6 +5,8 @@ const PortfolioContext = createContext(null);
 
 const STORAGE_KEY = 'rajkishore_portfolio_data';
 const INBOX_STORAGE_KEY = 'portfolio_inbox_messages';
+const ADMIN_PASSWORD_KEY = 'rajkishore_admin_custom_password';
+const DEFAULT_ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Raj@Admin2026';
 
 const INITIAL_INBOX_MESSAGES = [
   {
@@ -69,6 +71,50 @@ export function PortfolioProvider({ children }) {
     setTimeout(() => {
       setToast(null);
     }, 3500);
+  };
+
+  // Admin Password Management with LocalStorage persistence
+  const [adminPassword, setAdminPassword] = useState(() => {
+    try {
+      const saved = localStorage.getItem(ADMIN_PASSWORD_KEY);
+      if (saved) return saved;
+    } catch (e) {
+      console.error('Failed to load admin password from storage', e);
+    }
+    return DEFAULT_ADMIN_PASSWORD;
+  });
+
+  const verifyAdminPassword = (enteredPassword) => {
+    return enteredPassword === adminPassword;
+  };
+
+  const changeAdminPassword = (currentPassword, newPassword) => {
+    if (currentPassword !== adminPassword) {
+      return { success: false, error: 'Current password does not match.' };
+    }
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, error: 'New password must be at least 6 characters long.' };
+    }
+    try {
+      localStorage.setItem(ADMIN_PASSWORD_KEY, newPassword);
+      setAdminPassword(newPassword);
+      showToast('Admin password updated successfully!', 'success');
+      return { success: true };
+    } catch (e) {
+      console.error('Failed to save new password', e);
+      return { success: false, error: 'Failed to save new password to browser storage.' };
+    }
+  };
+
+  const resetAdminPasswordToDefault = () => {
+    try {
+      localStorage.removeItem(ADMIN_PASSWORD_KEY);
+      setAdminPassword(DEFAULT_ADMIN_PASSWORD);
+      showToast('Admin password reset to system default.', 'info');
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: 'Failed to reset password.' };
+    }
   };
 
   // Persist Portfolio Data changes
@@ -416,15 +462,20 @@ export function PortfolioProvider({ children }) {
         resetToDefaults,
         exportDataJSON,
         importDataJSON,
+        // Security & Password
+        adminPassword,
+        verifyAdminPassword,
+        changeAdminPassword,
+        resetAdminPasswordToDefault,
       }}
     >
       {children}
 
       {/* Global Animated Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-[#190d32]/95 border border-purple-500/40 text-white shadow-2xl backdrop-blur-xl animate-bounce">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-xs sm:text-sm font-semibold">{toast.message}</span>
+        <div className="fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-[#140b28]/95 border border-purple-500/40 text-white shadow-[0_0_30px_rgba(168,85,247,0.35)] backdrop-blur-2xl transition-all duration-300">
+          <span className={`w-2.5 h-2.5 rounded-full ${toast.type === 'error' ? 'bg-rose-500 animate-pulse' : toast.type === 'info' ? 'bg-cyan-400' : 'bg-emerald-400 animate-ping'}`} />
+          <span className="text-xs sm:text-sm font-semibold tracking-wide">{toast.message}</span>
         </div>
       )}
     </PortfolioContext.Provider>

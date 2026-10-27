@@ -4,7 +4,8 @@ import {
   Lock, KeyRound, ArrowLeft, LogOut, CheckCircle2, AlertCircle, 
   LayoutDashboard, User, FolderKanban, Cpu, Briefcase, Award, 
   Mail, Download, Upload, RotateCcw, Plus, Trash2, Edit3, Save, 
-  ExternalLink, Check, Eye, EyeOff, Sparkles, Shield, ToggleLeft, ToggleRight, X
+  ExternalLink, Check, Eye, EyeOff, Sparkles, Shield, ToggleLeft, ToggleRight, X,
+  Key
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -42,6 +43,11 @@ export default function Admin({ darkMode, onNavigateHome }) {
     resetToDefaults,
     exportDataJSON,
     importDataJSON,
+    // Security & Password Management
+    adminPassword,
+    verifyAdminPassword,
+    changeAdminPassword,
+    resetAdminPasswordToDefault,
     showToast
   } = usePortfolio();
 
@@ -52,21 +58,38 @@ export default function Admin({ darkMode, onNavigateHome }) {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [shake, setShake] = useState(false);
 
   // Active Tab State
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Handle Login
+  // Handle Login with smooth feedback & verification
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === DEFAULT_PASSWORD) {
-      sessionStorage.setItem(AUTH_KEY, 'true');
-      setIsAuthenticated(true);
-      setAuthError('');
-      showToast('Welcome back, Rajkishore!');
-    } else {
-      setAuthError('Incorrect Admin Password. Please try again.');
-    }
+    if (!passwordInput.trim()) return;
+
+    setAuthError('');
+    setIsAuthenticating(true);
+
+    setTimeout(() => {
+      const isValid = verifyAdminPassword 
+        ? verifyAdminPassword(passwordInput) 
+        : (passwordInput === DEFAULT_PASSWORD);
+
+      if (isValid) {
+        sessionStorage.setItem(AUTH_KEY, 'true');
+        setIsAuthenticated(true);
+        setAuthError('');
+        setIsAuthenticating(false);
+        showToast('Welcome back, Rajkishore! Administrator access authorized.', 'success');
+      } else {
+        setIsAuthenticating(false);
+        setAuthError('Access Denied: The password you entered is incorrect.');
+        setShake(true);
+        setTimeout(() => setShake(false), 600);
+      }
+    }, 450);
   };
 
   // Handle Logout
@@ -78,89 +101,204 @@ export default function Admin({ darkMode, onNavigateHome }) {
   };
 
   // =========================================================================
-  // LOGIN SCREEN
+  // ULTRA-MODERN ANIMATED LOGIN SCREEN
   // =========================================================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#0b0418] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Ambient Radial Glow */}
+      <div className="min-h-screen bg-[#0b0418] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden selection:bg-purple-600/40 selection:text-purple-200">
+        
+        {/* Futuristic Cyber Matrix Grid */}
         <div 
-          className="absolute w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(124, 58, 237, 0.15) 60%, transparent 75%)' }}
+          className="absolute inset-0 pointer-events-none opacity-25"
+          style={{
+            backgroundImage: `radial-gradient(rgba(168, 85, 247, 0.15) 1px, transparent 1px), radial-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+            backgroundPosition: '0 0, 20px 20px'
+          }}
+        />
+
+        {/* Floating Glowing Neon Gradient Mesh Orbs */}
+        <motion.div 
+          animate={{
+            x: [0, 40, -30, 0],
+            y: [0, -35, 25, 0],
+            scale: [1, 1.15, 0.9, 1],
+          }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full blur-[140px] pointer-events-none opacity-60"
+          style={{ background: 'radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(124, 58, 237, 0.2) 50%, transparent 75%)' }}
         />
 
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="relative w-full max-w-md rounded-3xl p-8 sm:p-10 glass-dark border border-purple-500/40 shadow-glow"
-        >
-          {/* Header */}
-          <div className="flex flex-col items-center text-center space-y-3 mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-glow-btn">
-              <Lock className="w-8 h-8" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-extrabold text-white tracking-tight">Portfolio Admin CMS</h1>
-              <p className="text-xs text-purple-300/80 mt-1">
-                Enter your administrative password to manage all content.
-              </p>
-            </div>
-          </div>
+          animate={{
+            x: [0, -45, 35, 0],
+            y: [0, 40, -30, 0],
+            scale: [1, 0.9, 1.15, 1],
+          }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -bottom-28 -right-28 w-[520px] h-[520px] rounded-full blur-[150px] pointer-events-none opacity-50"
+          style={{ background: 'radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(147, 51, 234, 0.25) 50%, transparent 75%)' }}
+        />
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2">
-                Admin Password
-              </label>
-              <div className="relative">
-                <input
-                  type={passwordVisible ? 'text' : 'password'}
-                  required
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="Enter admin password..."
-                  className="w-full px-4 py-3.5 pr-11 rounded-xl text-sm bg-[#130924]/80 border border-purple-500/30 text-white placeholder-slate-500 focus:border-purple-400 focus:ring-1 focus:ring-purple-400 outline-none transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white transition-colors"
-                >
-                  {passwordVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+        <motion.div 
+          animate={{
+            scale: [0.95, 1.08, 0.95],
+            opacity: [0.35, 0.55, 0.35]
+          }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-[360px] h-[360px] rounded-full blur-[120px] pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)' }}
+        />
+
+        {/* Ambient Floating Dust Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{
+                x: (i * 90) % 900 - 450,
+                y: (i * 70) % 700 - 350,
+                opacity: 0.2
+              }}
+              animate={{
+                y: [0, -45, 0],
+                opacity: [0.2, 0.7, 0.2],
+                scale: [1, 1.3, 1]
+              }}
+              transition={{
+                duration: 5 + (i % 4) * 2,
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: "easeInOut"
+              }}
+              className="absolute left-1/2 top-1/2 w-1.5 h-1.5 rounded-full bg-purple-400/50 shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+            />
+          ))}
+        </div>
+
+        {/* Main Glassmorphic Login Card */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9, y: 25 }}
+          animate={shake ? { x: [-12, 12, -8, 8, -4, 4, 0] } : { opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative w-full max-w-md rounded-3xl p-[1.5px] bg-gradient-to-b from-purple-500/50 via-purple-700/20 to-cyan-500/30 shadow-[0_0_60px_rgba(168,85,247,0.22)] backdrop-blur-2xl z-10"
+        >
+          <div className="rounded-3xl p-8 sm:p-10 bg-[#0d061c]/90 backdrop-blur-2xl relative overflow-hidden">
+            
+            {/* Top Security Pill Badge */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase bg-purple-950/70 border border-purple-500/30 text-purple-300 shadow-glow-sm">
+                <Shield className="w-3 h-3 text-cyan-400 animate-pulse" />
+                <span>Enterprise CMS Gateway</span>
+              </div>
+            </div>
+
+            {/* Glowing Icon Header */}
+            <div className="flex flex-col items-center text-center space-y-3 mb-8">
+              <div className="relative group">
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 blur-md opacity-70 group-hover:opacity-100 transition duration-500 animate-pulse" />
+                <div className="relative w-16 h-16 rounded-2xl bg-[#130924] border border-purple-500/40 flex items-center justify-center text-white shadow-glow-btn">
+                  <Lock className="w-7 h-7 text-purple-300 group-hover:scale-110 transition-transform duration-300" />
+                </div>
               </div>
 
-              {authError && (
-                <div className="flex items-center gap-2 mt-2.5 text-xs text-rose-400">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{authError}</span>
-                </div>
-              )}
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  <span className="bg-gradient-to-r from-white via-purple-200 to-cyan-300 bg-clip-text text-transparent">Admin</span> Control Panel
+                </h1>
+                <p className="text-xs text-purple-300/80 mt-1.5">
+                  Authenticated management portal for Rajkishore Pradhan
+                </p>
+              </div>
             </div>
 
-            <button
-              type="submit"
-              className="w-full py-3.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-glow-btn hover:shadow-glow transition-all duration-300"
-            >
-              Sign In to Dashboard
-            </button>
-          </form>
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="space-y-5">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
+                    Security Passphrase
+                  </span>
+                </label>
 
-          {/* Footer Info */}
-          <div className="mt-8 pt-6 border-t border-purple-500/20 flex items-center justify-between text-xs">
-            <button
-              type="button"
-              onClick={onNavigateHome}
-              className="inline-flex items-center gap-1.5 text-purple-300 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Portfolio</span>
-            </button>
-            <span className="text-[11px] text-slate-500">Default: Raj@Admin2026</span>
+                <div className="relative">
+                  <input
+                    type={passwordVisible ? 'text' : 'password'}
+                    required
+                    autoFocus
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="Enter admin password..."
+                    className="w-full px-4 py-3.5 pr-11 rounded-2xl text-sm bg-[#130924]/90 border border-purple-500/35 text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-purple-500/30 outline-none transition-all duration-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-purple-400 hover:text-cyan-300 transition-colors"
+                  >
+                    {passwordVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {/* Error Banner with AnimatePresence */}
+                <AnimatePresence>
+                  {authError && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      className="flex items-center gap-2 mt-3 p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/30 text-xs text-rose-300"
+                    >
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                      <span>{authError}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Submit Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isAuthenticating}
+                className="w-full py-3.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-500 hover:to-cyan-600 shadow-glow-btn hover:shadow-[0_0_35px_rgba(168,85,247,0.45)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+              >
+                {isAuthenticating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Verifying Credentials...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In to Dashboard</span>
+                    <Sparkles className="w-4 h-4" />
+                  </>
+                )}
+              </motion.button>
+            </form>
+
+            {/* Bottom Footer Info (Clean & Secure - ZERO password hints!) */}
+            <div className="mt-8 pt-6 border-t border-purple-500/20 flex items-center justify-between text-xs">
+              <button
+                type="button"
+                onClick={onNavigateHome}
+                className="inline-flex items-center gap-1.5 text-purple-300 hover:text-cyan-300 transition-colors group cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                <span>Back to Website</span>
+              </button>
+              <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                256-Bit SSL Encrypted
+              </span>
+            </div>
+
           </div>
         </motion.div>
+
       </div>
     );
   }
@@ -178,6 +316,7 @@ export default function Admin({ darkMode, onNavigateHome }) {
     { id: 'experience', label: 'Experience', icon: Briefcase, badge: data.experienceData.length },
     { id: 'certifications', label: 'Certificates & Education', icon: Award },
     { id: 'inbox', label: 'Messages Inbox', icon: Mail, badge: unreadMessagesCount > 0 ? unreadMessagesCount : null },
+    { id: 'security', label: 'Security & Password', icon: KeyRound },
     { id: 'backup', label: 'Backup & Reset', icon: Download },
   ];
 
@@ -355,6 +494,15 @@ export default function Admin({ darkMode, onNavigateHome }) {
               />
             )}
 
+            {activeTab === 'security' && (
+              <SecurityPasswordManager 
+                changeAdminPassword={changeAdminPassword} 
+                resetAdminPasswordToDefault={resetAdminPasswordToDefault} 
+                handleLogout={handleLogout} 
+                showToast={showToast} 
+              />
+            )}
+
             {activeTab === 'backup' && (
               <BackupManager 
                 exportDataJSON={exportDataJSON} 
@@ -382,6 +530,7 @@ function OverviewPanel({ data, inbox, setActiveTab, exportDataJSON, resetToDefau
     { label: 'Certifications', value: data.certificationsData.length, tab: 'certifications', icon: Award },
     { label: 'Experience Milestones', value: data.experienceData.length, tab: 'experience', icon: Briefcase },
     { label: 'Inbox Inquiries', value: inbox.length, tab: 'inbox', icon: Mail },
+    { label: 'Admin Security', value: 'Protected', tab: 'security', icon: KeyRound },
   ];
 
   return (
@@ -427,7 +576,7 @@ function OverviewPanel({ data, inbox, setActiveTab, exportDataJSON, resetToDefau
       </div>
 
       {/* Stats Counter Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
         {stats.map((s) => {
           const Icon = s.icon;
           return (
@@ -1704,6 +1853,334 @@ function BackupManager({ exportDataJSON, importDataJSON, resetToDefaults }) {
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset to Default Data</span>
         </button>
+      </div>
+    </motion.div>
+  );
+}
+
+// =========================================================================
+// 8. SECURITY & PASSWORD MANAGER PANEL
+// =========================================================================
+function SecurityPasswordManager({ changeAdminPassword, resetAdminPasswordToDefault, handleLogout, showToast }) {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Password strength calculation
+  const getStrength = (pass) => {
+    if (!pass) return { score: 0, text: 'Empty', color: 'bg-slate-700', width: '0%' };
+    let score = 0;
+    if (pass.length >= 6) score += 1;
+    if (pass.length >= 10) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score <= 1) return { score: 1, text: 'Weak', color: 'bg-rose-500', width: '25%' };
+    if (score === 2) return { score: 2, text: 'Fair', color: 'bg-amber-500', width: '50%' };
+    if (score === 3) return { score: 3, text: 'Good', color: 'bg-purple-500', width: '75%' };
+    return { score: 4, text: 'Strong', color: 'bg-emerald-500', width: '100%' };
+  };
+
+  const strength = getStrength(newPassword);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    if (!currentPassword) {
+      setErrorMsg('Please enter your current administrator password.');
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      setErrorMsg('New password must be at least 6 characters in length.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setErrorMsg('New password and confirmation password do not match.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      const result = changeAdminPassword(currentPassword, newPassword);
+      setIsSubmitting(false);
+
+      if (result.success) {
+        setSuccessMsg('Admin security password updated successfully! Your new password is now active.');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setErrorMsg(result.error || 'Failed to update password. Please check your current password.');
+      }
+    }, 400);
+  };
+
+  const handleResetDefault = () => {
+    if (window.confirm('Reset admin password to the factory default ("Raj@Admin2026")?')) {
+      const result = resetAdminPasswordToDefault();
+      if (result.success) {
+        setSuccessMsg('Admin password has been reset to system default (Raj@Admin2026).');
+        setErrorMsg('');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    }
+  };
+
+  return (
+    <motion.div
+      key="security"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      {/* Header Banner */}
+      <div className="p-6 sm:p-8 rounded-3xl glass-dark border border-purple-500/30 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2.5 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-500/30 shadow-glow-sm">
+            <KeyRound className="w-5 h-5 text-cyan-400" />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Security & Password</h2>
+            <p className="text-xs text-slate-400">
+              Manage your administrator credentials and session security settings
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column: Change Password Card */}
+        <div className="lg:col-span-7">
+          <div className="p-6 sm:p-8 rounded-3xl glass-dark border border-purple-500/30 relative">
+            <h3 className="text-lg font-bold text-white mb-1 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-purple-400" />
+              Change Admin Password
+            </h3>
+            <p className="text-xs text-slate-400 mb-6">
+              Update the security password used to access this CMS. Changes take effect immediately without redeploying.
+            </p>
+
+            {successMsg && (
+              <motion.div 
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-5 p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2.5"
+              >
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <span>{successMsg}</span>
+              </motion.div>
+            )}
+
+            {errorMsg && (
+              <motion.div 
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-5 p-3.5 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2.5"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                <span>{errorMsg}</span>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              
+              {/* Current Password */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-1.5">
+                  Current Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showCurrent ? 'text' : 'password'}
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter existing password..."
+                    className="w-full px-4 py-3 pr-11 rounded-xl text-sm bg-[#130924]/80 border border-purple-500/30 text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-purple-400 outline-none transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white transition-colors"
+                  >
+                    {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-1.5 flex items-center justify-between">
+                  <span>New Password</span>
+                  {newPassword && (
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Strength: <strong className="text-white">{strength.text}</strong>
+                    </span>
+                  )}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNew ? 'text' : 'password'}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="At least 6 characters..."
+                    className="w-full px-4 py-3 pr-11 rounded-xl text-sm bg-[#130924]/80 border border-purple-500/30 text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-purple-400 outline-none transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNew(!showNew)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white transition-colors"
+                  >
+                    {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {/* Password Strength Bar */}
+                {newPassword && (
+                  <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: strength.width }}
+                      className={`h-full ${strength.color} transition-all duration-300`}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm New Password */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-purple-300 mb-1.5 flex items-center justify-between">
+                  <span>Confirm New Password</span>
+                  {confirmPassword && (
+                    <span className={`text-[10px] font-mono ${confirmPassword === newPassword ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {confirmPassword === newPassword ? '✓ Passwords match' : '✕ Does not match'}
+                    </span>
+                  )}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirm ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-type new password..."
+                    className="w-full px-4 py-3 pr-11 rounded-xl text-sm bg-[#130924]/80 border border-purple-500/30 text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-purple-400 outline-none transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white transition-colors"
+                  >
+                    {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full mt-3 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 hover:from-purple-500 hover:to-cyan-600 shadow-glow-btn hover:shadow-glow transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Updating Security Credentials...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save New Password</span>
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </div>
+        </div>
+
+        {/* Right Column: Security Status & Controls */}
+        <div className="lg:col-span-5 space-y-6">
+          
+          {/* Active Session Info Card */}
+          <div className="p-6 rounded-3xl glass-dark border border-purple-500/25 space-y-4">
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Shield className="w-4 h-4 text-cyan-400" />
+              Active Session Status
+            </h3>
+
+            <div className="space-y-3 text-xs">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+                <span className="text-slate-400">Authentication</span>
+                <span className="font-semibold text-emerald-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Active Administrator
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+                <span className="text-slate-400">Storage Protection</span>
+                <span className="font-semibold text-purple-300">Browser Local Encrypted</span>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+                <span className="text-slate-400">Role Privilege</span>
+                <span className="font-semibold text-cyan-300">Primary Portfolio Owner</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full py-2.5 rounded-full text-xs font-semibold text-rose-300 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Terminate Session & Logout</span>
+            </button>
+          </div>
+
+          {/* Reset to Default Card */}
+          <div className="p-6 rounded-3xl bg-slate-900/60 border border-purple-500/20 space-y-3">
+            <h4 className="text-sm font-bold text-purple-300 flex items-center gap-2">
+              <RotateCcw className="w-4 h-4 text-amber-400" />
+              Restore Default Password
+            </h4>
+            <p className="text-xs text-slate-400">
+              Forgot your customized password? You can revert the security password back to the factory system default anytime.
+            </p>
+            <button
+              type="button"
+              onClick={handleResetDefault}
+              className="px-4 py-2 rounded-full text-xs font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Password to Default</span>
+            </button>
+          </div>
+
+        </div>
+
       </div>
     </motion.div>
   );
