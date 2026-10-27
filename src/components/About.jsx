@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Award, FolderKanban, ShieldCheck, Sparkles } from 'lucide-react';
-import { personalInfo } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function About({ darkMode }) {
+  const { data } = usePortfolio();
+  const personalInfo = data.personalInfo;
+
   return (
     <section 
       id="about" 
@@ -85,65 +88,71 @@ export default function About({ darkMode }) {
             {/* 3 Stat Counter Cards with Interactive Hover Glow */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               
-              {/* Stat 1: SAP Certifications */}
-              <motion.div 
-                whileHover={{ y: -6 }}
-                className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
-                  darkMode 
-                    ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
-                    : 'glass-light border-purple-200 hover:border-purple-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
-                    {personalInfo.stats[0].value}
-                  </span>
-                  <Award className="w-6 h-6 text-purple-400/80" />
-                </div>
-                <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {personalInfo.stats[0].label}
-                </p>
-              </motion.div>
+              {/* Stat 1 */}
+              {personalInfo.stats?.[0] && (
+                <motion.div 
+                  whileHover={{ y: -6 }}
+                  className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
+                    darkMode 
+                      ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
+                      : 'glass-light border-purple-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
+                      {personalInfo.stats[0].value}
+                    </span>
+                    <Award className="w-6 h-6 text-purple-400/80" />
+                  </div>
+                  <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                    {personalInfo.stats[0].label}
+                  </p>
+                </motion.div>
+              )}
 
-              {/* Stat 2: Enterprise & Tech Projects */}
-              <motion.div 
-                whileHover={{ y: -6 }}
-                className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
-                  darkMode 
-                    ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
-                    : 'glass-light border-purple-200 hover:border-purple-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
-                    {personalInfo.stats[1].value}
-                  </span>
-                  <FolderKanban className="w-6 h-6 text-purple-400/80" />
-                </div>
-                <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {personalInfo.stats[1].label}
-                </p>
-              </motion.div>
+              {/* Stat 2 */}
+              {personalInfo.stats?.[1] && (
+                <motion.div 
+                  whileHover={{ y: -6 }}
+                  className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
+                    darkMode 
+                      ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
+                      : 'glass-light border-purple-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
+                      {personalInfo.stats[1].value}
+                    </span>
+                    <FolderKanban className="w-6 h-6 text-purple-400/80" />
+                  </div>
+                  <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                    {personalInfo.stats[1].label}
+                  </p>
+                </motion.div>
+              )}
 
-              {/* Stat 3: Process Compliance */}
-              <motion.div 
-                whileHover={{ y: -6 }}
-                className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
-                  darkMode 
-                    ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
-                    : 'glass-light border-purple-200 hover:border-purple-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
-                    {personalInfo.stats[2].value}
-                  </span>
-                  <ShieldCheck className="w-6 h-6 text-purple-400/80" />
-                </div>
-                <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {personalInfo.stats[2].label}
-                </p>
-              </motion.div>
+              {/* Stat 3 */}
+              {personalInfo.stats?.[2] && (
+                <motion.div 
+                  whileHover={{ y: -6 }}
+                  className={`p-5 rounded-2xl transition-all duration-300 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] ${
+                    darkMode 
+                      ? 'glass-dark border-purple-500/20 hover:border-purple-500/50' 
+                      : 'glass-light border-purple-200 hover:border-purple-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-neon-purple">
+                      {personalInfo.stats[2].value}
+                    </span>
+                    <ShieldCheck className="w-6 h-6 text-purple-400/80" />
+                  </div>
+                  <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                    {personalInfo.stats[2].label}
+                  </p>
+                </motion.div>
+              )}
 
             </div>
 

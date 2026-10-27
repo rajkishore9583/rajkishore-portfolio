@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin, Github, Mail, Phone, Download, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
-import { personalInfo } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Hero({ darkMode }) {
+  const { data } = usePortfolio();
+  const personalInfo = data.personalInfo;
+
   return (
     <section 
       id="home" 
@@ -90,8 +93,8 @@ export default function Hero({ darkMode }) {
                     : 'bg-purple-100/80 text-purple-800 border border-purple-200'
                 }`}
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Available for Roles
+                <span className={`w-2 h-2 rounded-full ${personalInfo.availableForRoles !== false ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+                {personalInfo.availableForRoles !== false ? 'Available for Roles' : 'Engaged in Project'}
               </div>
             </div>
 

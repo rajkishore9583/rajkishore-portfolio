@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Calendar, MapPin, Sparkles, ChevronRight } from 'lucide-react';
-import { experienceData } from '../data/portfolioData';
+import { Calendar, MapPin, Sparkles, ChevronRight } from 'lucide-react';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Experience({ darkMode }) {
+  const { data } = usePortfolio();
+  const experienceData = data.experienceData || [];
+
   return (
     <section id="experience" className="relative py-20 lg:py-28 overflow-hidden">
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
@@ -48,7 +51,7 @@ export default function Experience({ darkMode }) {
 
               return (
                 <motion.div 
-                  key={exp.role} 
+                  key={exp.role + index} 
                   initial={{ opacity: 0, y: 35 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
@@ -108,32 +111,36 @@ export default function Experience({ darkMode }) {
                       </div>
 
                       {/* Highlights */}
-                      <ul className="space-y-2 mb-5">
-                        {exp.highlights.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm">
-                            <ChevronRight className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                            <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>
-                              {item}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                      {exp.highlights && exp.highlights.length > 0 && (
+                        <ul className="space-y-2 mb-5">
+                          {exp.highlights.map((item, idx) => (
+                            <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm">
+                              <ChevronRight className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                              <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>
+                                {item}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
 
                       {/* Tech Chips */}
-                      <div className="flex flex-wrap gap-1.5 pt-2 border-t border-purple-500/15">
-                        {exp.tech.map((t) => (
-                          <span
-                            key={t}
-                            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
-                              darkMode
-                                ? 'bg-[#0b0418]/60 text-purple-200 border border-purple-500/20'
-                                : 'bg-white text-purple-800 border border-purple-200'
-                            }`}
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
+                      {exp.tech && exp.tech.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-purple-500/15">
+                          {exp.tech.map((t) => (
+                            <span
+                              key={t}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
+                                darkMode
+                                  ? 'bg-[#0b0418]/60 text-purple-200 border border-purple-500/20'
+                                  : 'bg-white text-purple-800 border border-purple-200'
+                              }`}
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
                     </div>
                   </div>

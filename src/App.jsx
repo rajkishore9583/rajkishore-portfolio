@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PortfolioProvider } from './context/PortfolioContext';
 import GlowBackground from './components/GlowBackground';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -9,8 +10,9 @@ import CertificationsEducation from './components/CertificationsEducation';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Admin from './pages/Admin';
 
-export default function App() {
+function MainPortfolioContent() {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('rajkishore_theme');
     if (saved !== null) {
@@ -18,6 +20,34 @@ export default function App() {
     }
     return true; // Default to Dark Mode as per reference purple neon design
   });
+
+  const [currentPath, setCurrentPath] = useState(() => {
+    const p = window.location.pathname.toLowerCase();
+    const h = window.location.hash.toLowerCase();
+    if (p.startsWith('/admin') || h.startsWith('#/admin') || h.startsWith('#admin')) {
+      return '/admin';
+    }
+    return '/';
+  });
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const p = window.location.pathname.toLowerCase();
+      const h = window.location.hash.toLowerCase();
+      if (p.startsWith('/admin') || h.startsWith('#/admin') || h.startsWith('#admin')) {
+        setCurrentPath('/admin');
+      } else {
+        setCurrentPath('/');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -35,6 +65,26 @@ export default function App() {
       document.body.style.color = '#1e1b4b';
     }
   }, [darkMode]);
+
+  const navigateToHome = () => {
+    if (window.location.hash.startsWith('#/admin') || window.location.hash.startsWith('#admin')) {
+      window.location.hash = '';
+    }
+    if (window.location.pathname.startsWith('/admin')) {
+      window.history.pushState(null, '', '/');
+    }
+    setCurrentPath('/');
+  };
+
+  if (currentPath === '/admin') {
+    return (
+      <div className={`relative min-h-screen transition-colors duration-300 selection:bg-purple-600/30 selection:text-purple-300 ${
+        darkMode ? 'bg-[#0b0418] text-slate-100' : 'bg-[#0b0418] text-slate-100'
+      }`}>
+        <Admin darkMode={darkMode} onNavigateHome={navigateToHome} />
+      </div>
+    );
+  }
 
   return (
     <div className={`relative min-h-screen transition-colors duration-300 selection:bg-purple-600/30 selection:text-purple-300 ${
@@ -60,5 +110,13 @@ export default function App() {
       {/* Footer */}
       <Footer darkMode={darkMode} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <PortfolioProvider>
+      <MainPortfolioContent />
+    </PortfolioProvider>
   );
 }

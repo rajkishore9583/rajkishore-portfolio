@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Phone, Menu, X, Sparkles } from 'lucide-react';
-import { personalInfo } from '../data/portfolioData';
+import { personalInfo as fallbackPersonalInfo } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Navbar({ darkMode, setDarkMode }) {
+  const { data } = usePortfolio();
+  const info = data?.personalInfo || fallbackPersonalInfo;
+
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -90,8 +94,8 @@ export default function Navbar({ darkMode, setDarkMode }) {
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Phone Link */}
           <a
-            href={personalInfo.socials.phone}
-            title={personalInfo.phoneFormatted}
+            href={info.socials?.phone || `tel:${info.phone}`}
+            title={info.phoneFormatted || info.phone}
             className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 ${
               darkMode
                 ? 'text-purple-300 hover:text-white bg-purple-900/30 hover:bg-purple-800/50 border border-purple-500/20'
@@ -169,7 +173,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
             })}
             <div className="pt-3 border-t border-purple-500/20 flex items-center justify-between">
               <span className={`text-xs ${darkMode ? 'text-purple-300' : 'text-purple-800'}`}>
-                {personalInfo.phoneFormatted}
+                {info.phoneFormatted || info.phone}
               </span>
               <a
                 href="#contact"

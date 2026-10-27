@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Boxes, GitPullRequest, Code2, Sparkles, CheckCircle, Layers } from 'lucide-react';
-import { skillsData } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Skills({ darkMode }) {
+  const { data } = usePortfolio();
+  const skillsData = data.skillsData || [];
+
   const [activeTab, setActiveTab] = useState('All');
 
-  const categories = ['All', 'SAP & ERP', 'Functional Consulting', 'Software & Technical'];
+  const categories = ['All', ...skillsData.map(c => c.category)];
 
   const filteredCategories = activeTab === 'All' 
     ? skillsData 

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, Sparkles, CheckCircle2, Copy, Check } from 'lucide-react';
-import { personalInfo } from '../data/portfolioData';
+import { personalInfo as fallbackPersonalInfo } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Contact({ darkMode }) {
+  const { data, addInboxMessage } = usePortfolio();
+  const info = data?.personalInfo || fallbackPersonalInfo;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,6 +23,16 @@ export default function Contact({ darkMode }) {
     if (!formData.name || !formData.email || !formData.message) return;
 
     setLoading(true);
+
+    if (addInboxMessage) {
+      addInboxMessage({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        subject: 'Portfolio Contact Form Inquiry'
+      });
+    }
+
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
@@ -28,7 +42,7 @@ export default function Contact({ darkMode }) {
   };
 
   const copyEmail = () => {
-    navigator.clipboard.writeText(personalInfo.email);
+    navigator.clipboard.writeText(info.email || 'rajkishorepradhan59@gmail.com');
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -115,10 +129,10 @@ export default function Contact({ darkMode }) {
                   <div className="text-left">
                     <div className="text-[10px] uppercase font-bold text-purple-400">Email Me</div>
                     <a 
-                      href={`mailto:${personalInfo.email}`}
+                      href={`mailto:${info.email}`}
                       className={`text-xs font-semibold hover:underline ${darkMode ? 'text-white' : 'text-slate-800'}`}
                     >
-                      {personalInfo.email}
+                      {info.email}
                     </a>
                   </div>
                 </div>
@@ -149,10 +163,10 @@ export default function Contact({ darkMode }) {
                   <div className="text-left">
                     <div className="text-[10px] uppercase font-bold text-purple-400">Call Me</div>
                     <a 
-                      href={personalInfo.socials.phone}
+                      href={info.socials?.phone || `tel:${info.phone}`}
                       className={`text-xs font-semibold hover:underline ${darkMode ? 'text-white' : 'text-slate-800'}`}
                     >
-                      {personalInfo.phoneFormatted}
+                      {info.phoneFormatted || info.phone}
                     </a>
                   </div>
                 </div>
@@ -173,7 +187,7 @@ export default function Contact({ darkMode }) {
                 <div className="text-left">
                   <div className="text-[10px] uppercase font-bold text-purple-400">Location</div>
                   <div className={`text-xs font-semibold ${darkMode ? 'text-white' : 'text-slate-800'}`}>
-                    {personalInfo.location}
+                    {info.location}
                   </div>
                 </div>
               </motion.div>

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github, Sparkles } from 'lucide-react';
-import { projectsData } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 import ProjectModal from './ProjectModal';
 
 export default function Projects({ darkMode }) {
+  const { data } = usePortfolio();
+  const projectsData = data.projectsData || [];
+
   const [selectedProject, setSelectedProject] = useState(null);
 
   const handleOpenDemo = (project) => {
@@ -106,7 +109,7 @@ export default function Projects({ darkMode }) {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5 mb-2">
-                    {project.tags.slice(0, 4).map((tag) => (
+                    {project.tags?.slice(0, 4).map((tag) => (
                       <span
                         key={tag}
                         className={`px-2.5 py-0.5 rounded-md text-[10px] font-mono font-semibold ${

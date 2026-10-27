@@ -1,8 +1,12 @@
 import React from 'react';
-import { ArrowUp, Linkedin, Github, Mail, Phone, Heart } from 'lucide-react';
-import { personalInfo } from '../data/portfolioData';
+import { ArrowUp, Linkedin, Github, Mail, Phone, Lock } from 'lucide-react';
+import { personalInfo as fallbackPersonalInfo } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Footer({ darkMode }) {
+  const { data } = usePortfolio();
+  const info = data?.personalInfo || fallbackPersonalInfo;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -26,17 +30,17 @@ export default function Footer({ darkMode }) {
               <span className="text-purple-500">.</span>
             </a>
             <p className="text-xs">
-              <span className="font-semibold text-purple-400">{personalInfo.name}</span> — {personalInfo.title}
+              <span className="font-semibold text-purple-400">{info.name}</span> — {info.title}
             </p>
             <p className="text-[11px] text-slate-500">
-              {personalInfo.location}
+              {info.location}
             </p>
           </div>
 
           {/* Social Links */}
           <div className="flex items-center gap-3">
             <a
-              href={personalInfo.socials.linkedin}
+              href={info.socials?.linkedin || info.linkedin}
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
@@ -50,7 +54,7 @@ export default function Footer({ darkMode }) {
             </a>
 
             <a
-              href={personalInfo.socials.github}
+              href={info.socials?.github || info.github}
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub"
@@ -64,7 +68,7 @@ export default function Footer({ darkMode }) {
             </a>
 
             <a
-              href={personalInfo.socials.email}
+              href={info.socials?.email || `mailto:${info.email}`}
               aria-label="Email"
               className={`p-2 rounded-full border transition-all ${
                 darkMode
@@ -76,7 +80,7 @@ export default function Footer({ darkMode }) {
             </a>
 
             <a
-              href={personalInfo.socials.phone}
+              href={info.socials?.phone || `tel:${info.phone}`}
               aria-label="Phone"
               className={`p-2 rounded-full border transition-all ${
                 darkMode
@@ -106,11 +110,26 @@ export default function Footer({ darkMode }) {
 
         </div>
 
-        {/* Bottom copyright line */}
+        {/* Bottom copyright line with subtle lock icon */}
         <div className="mt-8 pt-6 border-t border-purple-500/10 text-center text-[11px] text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>
-            © {new Date().getFullYear()} Rajkishore Pradhan. All rights reserved.
-          </span>
+          <div className="flex items-center gap-2">
+            <span>
+              © {new Date().getFullYear()} {info.name || 'Rajkishore Pradhan'}. All rights reserved.
+            </span>
+            {/* Subtle lock icon linking to /admin */}
+            <a
+              href="#/admin"
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.hash = '/admin';
+              }}
+              title="Admin CMS Portal"
+              aria-label="Admin Portal"
+              className="inline-flex items-center justify-center text-slate-500/40 hover:text-purple-400 transition-colors p-1"
+            >
+              <Lock className="w-3 h-3" />
+            </a>
+          </div>
           <span className="flex items-center gap-1">
             Built with 3D Pixar Aesthetics, React & Tailwind CSS
           </span>

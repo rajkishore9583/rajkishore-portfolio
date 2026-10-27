@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Award, ExternalLink, GraduationCap, Sparkles, CheckCircle2, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
-import { certificationsData, educationData } from '../data/portfolioData';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function CertificationsEducation({ darkMode }) {
+  const { data } = usePortfolio();
+  const certificationsData = data.certificationsData || [];
+  const educationData = data.educationData || [];
+
   const [expandedSpecialization, setExpandedSpecialization] = useState(true);
 
   return (
